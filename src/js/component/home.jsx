@@ -1,24 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
-
-//create your first component
 const Home = () => {
+	const[todos, setTodos] = useState([])
+	const createTodo=(e)=>{
+		e.preventDefault()
+		let newTodo={
+			"label":e.target.todoInput.value,
+			"done":false
+		}
+		let isNew= true
+		todos.forEach((todo)=>{
+			if(todo.label.toLowerCase()===newTodo.label.toLowerCase()){
+				isNew=false
+			}
+		})
+		// in case there is a duplicate
+		isNew ? setTodos([...todos,newTodo]) : alert("Todo already exists! Please enter a new Todo.")
+		e.target.todoInput.value=""
+	}
+	const removeTodo = (e,index)=>{
+		e.preventDefault()
+		let filteredTodos= todos.filter((todo,i)=>{
+			return i !== index
+		})
+		setTodos(filteredTodos)
+	}
+
 	return (
 		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
+			<form onSubmit={createTodo}> 
+				<input name="todoInput" type="text" placeholder="Enter a Todo"/>
+			</form>
+			<ul>
+				{todos.map((todo,index)=>{
+					return(
+						<li key={index}>
+							<span>{todo.label}</span>
+							<button onClick={(e)=>removeTodo(e,index)}>Delete</button>
+						</li>
+
+					)
+				})}
+			</ul>
 		</div>
 	);
 };
